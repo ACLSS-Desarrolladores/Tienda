@@ -21,3 +21,10 @@ producto, ver el valor total a pagar y confirmar la compra. Este módulo debe
 conectar con el módulo de inventario para que se actualice el stock de los 
 productos con cada venta; además, se tendrá una interfaz en la que los 
 administradores podrán listar las ventas realizadas hasta ese momento.<br>
+
+<b>Equipo ACLSS Desarrolladores - MisiónTIC 2022:</b>
+> A
+> C
+> L
+> S
+> S
