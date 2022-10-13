@@ -23,7 +23,7 @@ productos con cada venta; además, se tendrá una interfaz en la que los
 administradores podrán listar las ventas realizadas hasta ese momento.<br>
 
 <b>Equipo ACLSS Desarrolladores - MisiónTIC 2022:</b>
-> A<br>
+> Andres Felipe Rodriguez Hernandez<br>
 > C<br>
 > L<br>
 > S<br>
