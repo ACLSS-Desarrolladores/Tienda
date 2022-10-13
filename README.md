@@ -24,7 +24,7 @@ administradores podrán listar las ventas realizadas hasta ese momento.<br>
 
 <b>Equipo ACLSS Desarrolladores - MisiónTIC 2022:</b>
 > Andres Felipe Rodriguez Hernandez<br>
-> C<br>
+> Christian Dario Hernández Delgadillo<br>
 > L<br>
 > Sarha Sophia Sandoval Sandoval<br>
 > Sergio Peñaloza Rojas<br>
