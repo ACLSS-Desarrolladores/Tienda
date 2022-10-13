@@ -26,5 +26,5 @@ administradores podrán listar las ventas realizadas hasta ese momento.<br>
 > Andres Felipe Rodriguez Hernandez<br>
 > C<br>
 > L<br>
-> S<br>
+> Sarha Sophia Sandoval Sandoval<br>
 > Sergio Peñaloza Rojas<br>
