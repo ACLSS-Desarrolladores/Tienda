@@ -27,4 +27,4 @@ administradores podrán listar las ventas realizadas hasta ese momento.<br>
 > C<br>
 > L<br>
 > S<br>
-> S<br>
+> Sergio Peñaloza Rojas<br>
