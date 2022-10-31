@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { ProductoData } from '../../data/ProductoData';
 import ProductoListar from './ProductoListar';
 import ProductoAgregar from './ProductoAgregar';
@@ -6,9 +6,15 @@ import ProductoEditar from './ProductoEditar';
 
 const Producto = () => {
     const [resultado, setResultado] = useState([]);
+    const [estadoListar, setEstadoListar] = useState(true);
 
     const listarProducto = () => {
         setResultado(ProductoData);
+        setEstadoListar(!estadoListar);
+    }
+
+    if (estadoListar) {
+        listarProducto()
     }
 
     const [agregarModal, setAgregarModal] = useState(false);
@@ -30,9 +36,23 @@ const Producto = () => {
         setActualProducto(producto);
     }
 
-    useEffect(() => {
-        listarProducto();
-    }, [resultado]);
+    const agregarProducto = async (producto) => {
+        agregarProductoModal();
+        setResultado([...resultado, producto]);
+        setProcesarModal(!procesarModal);
+    }
+
+    const editarProducto = async (producto) => {
+        editarProductoModal();
+        setResultado(resultado.map((dato) => (dato.id === producto.id ? producto : dato)));
+        setProcesarModal(!procesarModal);
+    }
+
+    const [procesarModal, setProcesarModal] = useState(false);
+
+    const procesarProductoModal = () => {
+        setProcesarModal(!procesarModal);
+    }
 
     return (
         <>
@@ -41,11 +61,14 @@ const Producto = () => {
                 agregarProductoModal={agregarProductoModal}
                 seleccionarProducto={seleccionarProducto}
                 editarProductoModal={editarProductoModal}
+                procesarModal={procesarModal}
+                procesarProductoModal={procesarProductoModal}
             />
             {editarModal ? (
                 <ProductoEditar
                     editarModal={editarModal}
                     editarProductoModal={editarProductoModal}
+                    editarProducto={editarProducto}
                     actualProducto={actualProducto}
                 />
             ) : (
@@ -56,6 +79,7 @@ const Producto = () => {
                 <ProductoAgregar
                     agregarModal={agregarModal}
                     agregarProductoModal={agregarProductoModal}
+                    agregarProducto={agregarProducto}
                 />
             ) : (
                 <></>

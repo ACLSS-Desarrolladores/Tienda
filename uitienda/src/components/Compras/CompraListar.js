@@ -1,13 +1,56 @@
 import React, { useState } from 'react'
-import { Button, FormGroup, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap'
-import "bootstrap/dist/css/bootstrap.min.css";
+import { FormGroup, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import '../../styles/CompraProducto.css'
+
 const cargarImagen = require.context("../img/", true);
 
 const CompraListar = (props) => {
     const [detalle, setDetalle] = useState([]);
 
-    const addDetalle = (articulo) => {
-        setDetalle([...detalle, { nombre: articulo.nombre, precio: articulo.precio, cantidad: 1 }]);
+    const agregarDetalle = (articulo) => {
+        const d = detalle.filter((dato) => dato.nombre === articulo.nombre);
+        if (d.length > 0) {
+            setDetalle(detalle.map((dato) => (dato.nombre === articulo.nombre ?
+                {
+                    nombre: articulo.nombre, precio: articulo.precio, cantidad: dato.cantidad + 1
+                }
+                : dato)));
+        } else {
+            setDetalle([...detalle, { nombre: articulo.nombre, precio: articulo.precio, cantidad: 1 }]);
+        }
+        procesarCompraModal();
+    }
+
+    const limpiarDetalle = () => {
+        setDetalle([]);
+        procesarCompraModal();
+    }
+
+    const masDetalle = (nombre) => {
+        const d = detalle.filter((dato) => dato.nombre === nombre);
+        if (d.length > 0) {
+            setDetalle(detalle.map((dato) => (dato.nombre === nombre ?
+                {
+                    nombre: dato.nombre, precio: dato.precio, cantidad: dato.cantidad + 1
+                }
+                : dato)));
+        }
+        procesarCompraModal();
+    }
+
+    const menosDetalle = (nombre) => {
+        const d = detalle.filter((dato) => dato.nombre === nombre);
+        if (d.length > 0 && d[0].cantidad > 1) {
+            setDetalle(detalle.map((dato) => (dato.nombre === nombre ?
+                {
+                    nombre: dato.nombre, precio: dato.precio, cantidad: dato.cantidad - 1
+                }
+                : dato)));
+        } else {
+            setDetalle(detalle.filter((dato) => dato.nombre !== nombre));
+        }
         procesarCompraModal();
     }
 
@@ -21,18 +64,19 @@ const CompraListar = (props) => {
         detalle: [
 
         ],
-        total: 0
+        total: 0,
+        cantidad: 0
     });
 
     const calcularCompra = () => {
-        // venta.total = 0;
-        // detalle.map((item) => {
-        //     venta.total += parseFloat(item.precio) * item.cantidad
-        // });
-        venta.total = detalle.map((item) => parseFloat(item.precio) * parseInt(item.cantidad)  )
-        .reduce((previous, current) => {
-            return previous + current;
-        }, 0);
+        venta.total = detalle.map((item) => parseFloat(item.precio) * parseInt(item.cantidad))
+            .reduce((previous, current) => {
+                return previous + current;
+            }, 0);
+        venta.cantidad = detalle.map((item) => parseInt(item.cantidad))
+            .reduce((previous, current) => {
+                return previous + current;
+            }, 0);
     }
 
     const [procesarModal, setProcesarModal] = useState(false);
@@ -45,19 +89,30 @@ const CompraListar = (props) => {
         <>
             <div className='px-4 py-5 text-center'>
                 <h1 className='fw-bold'>Compras</h1>
-                <button className="btn btn-sm px-5 btn-success"
+                <button className="btn btn-sm btn-success"
                     onClick={() => {
                         detalleCompraModal()
                     }}
-                >
-                    Carrito
+                ><span className='bi bi-cart' style={{ 'fontSize': '25px' }}>
+                        {
+                            venta.cantidad > 0 ? (
+                                <span style={{ 'fontSize': '15px' }}>{' ' + venta.cantidad + ' '}</span>
+                            ) : (
+                                ''
+                            )
+                        }
+                    </span>
                 </button>
-                <div className='d-flex gap-4' style={{ 'display': 'flex', 'flexWrap': 'wrap' }}>
+                <div className='wrapper' >
                     {props.resultado ? (
                         props.resultado.map(item => (
                             <div className='card border-white' style={{ 'width': '18rem' }} key={item.id}>
                                 <div className='card-body'>
-                                    <img src={cargarImagen(`./figura-${item.id}.jpg`)} />
+                                    {(item.url ? (
+                                        <p><img src={item.url} width='100%' alt={item.nombre} /></p>
+                                    ) : (
+                                        <p><img src={cargarImagen(`./silueta.png`)} width='100%' alt={item.nombre} /></p>
+                                    ))}
                                     <p style={{ margin: 0 }}>{item.nombre}</p>
                                     <p style={{ margin: 0 }}>{item.descripcion}</p>
                                     <p style={{ margin: 0 }}>Stock: {item.existencia}</p>
@@ -66,22 +121,15 @@ const CompraListar = (props) => {
                                 <div className='card-footer' style={{ 'background': 'inherit', 'borderColor': 'inherit' }}>
                                     <button className="btn btn-sm px-5 btn-secondary"
                                         onClick={() => {
-                                            props.seleccionarCompra(item);
-                                            addDetalle(item);
+                                            agregarDetalle(item);
                                         }}
-                                    >
-                                        Añadir al carrito
-                                    </button>
+                                    ><span className='bi bi-bag-heart' style={{ 'fontSize': '20px' }}>
+                                        </span> Añadir al carrito</button>
                                 </div>
                             </div>
                         ))
                     ) : (
-                        <div className='card' style={{ 'width': '18rem' }}>
-                            <div className='card-body'>
-                                <h5 className='card-title'>Card title</h5>
-                                <p className='card-text'>Some quick example</p>
-                                <a href='#' className='btn btn-primary'>Go somewhere</a>
-                            </div>
+                        <div className='card border-white' style={{ 'width': '18rem' }}>
                         </div>
                     )}
                 </div>
@@ -98,51 +146,94 @@ const CompraListar = (props) => {
                             <div className="col-12">
                                 <table className="table table-striped table-sm">
                                     <thead>
-                                        <tr>
+                                        <tr className='bg-secondary text-white'>
                                             <th scope="col">Producto</th>
                                             <th scope="col">Precio</th>
                                             <th scope="col">Cantidad</th>
                                             <th scope="col">Subtotal</th>
+                                            <th></th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {venta.detalle.length > 0 ? (
                                             venta.detalle.map((item) => (
-                                                <tr>
+                                                <tr key={item.nombre}>
                                                     <td>{item.nombre}</td>
                                                     <td>$ {item.precio}</td>
                                                     <td>{item.cantidad}</td>
                                                     <td>$ {item.cantidad * item.precio}</td>
+                                                    <td>
+                                                        <span className='bi bi-cart-x-fill text-danger iconHover' style={{ 'fontSize': '25px' }}
+                                                            onClick={() => {
+                                                                menosDetalle(item.nombre);
+                                                            }}
+                                                        >
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span className='bi bi-cart-plus-fill text-success iconHover' style={{ 'fontSize': '25px' }}
+                                                            onClick={() => {
+                                                                masDetalle(item.nombre);
+                                                            }}
+                                                        >
+                                                        </span>
+                                                    </td>
                                                 </tr>
                                             ))
                                         ) : (
                                             <tr>
-                                                <td colSpan={4}><center>Carrito vacio</center></td>
+                                                <td colSpan={6}><center>Tu carrito está vacio</center></td>
                                             </tr>
                                         )}
-                                        <tr><td></td><td></td><td align='right'><b>Total</b></td>
-                                            <td><b>$ {venta.total}</b></td>
-                                        </tr>
+
+                                        {
+                                            venta.detalle.length > 0 ? (
+                                                <tr><td></td><td></td>
+                                                    <td align='right'><b>Total</b></td>
+                                                    <td><b>$ {venta.total}</b></td>
+                                                    <td></td><td></td>
+                                                </tr>
+                                            ) : (
+                                                <tr><td colSpan={6}></td>
+                                                </tr>
+                                            )
+                                        }
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </FormGroup>
                 </ModalBody>
-
-                <ModalFooter>
-                    <button className="btn btn-sm px-5 btn-success"
-                        onClick={(event) => {
-                            event.preventDefault();
-                            alert("En Construcción");
-                        }}
-                    >Finalizar Compra</button>
-                    <button className="btn btn-sm px-5 btn-secondary"
-                        onClick={() => {
-                            detalleCompraModal();
-                        }}
-                    >Continuar comprando</button>
-                </ModalFooter>
+                {venta.detalle.length > 0 ? (
+                    <ModalFooter>
+                        <button className="btn btn-sm px-5 btn-success"
+                            onClick={(event) => {
+                                event.preventDefault();
+                                alert("En Construcción");
+                            }}
+                        >Finalizar</button>
+                        <button className="btn btn-sm px-5 btn-danger"
+                            onClick={() => {
+                                limpiarDetalle();
+                            }}
+                        >Vaciar</button>
+                        <button className="btn btn-sm px-5 btn-secondary"
+                            onClick={() => {
+                                detalleCompraModal();
+                            }}
+                        >Continuar</button>
+                    </ModalFooter>
+                ) : (
+                    <ModalFooter>
+                        <button className="btn btn-sm px-5 btn-secondary"
+                            onClick={() => {
+                                detalleCompraModal();
+                            }}
+                        >Continuar</button>
+                    </ModalFooter>
+                )
+                }
             </Modal>
 
             <Modal isOpen={procesarModal} >
@@ -152,7 +243,7 @@ const CompraListar = (props) => {
 
                 <ModalBody>
                     <FormGroup>
-                        Procesado el producto
+                        Procesando producto
                     </FormGroup>
                 </ModalBody>
 
@@ -167,70 +258,6 @@ const CompraListar = (props) => {
                     >Continuar</button>
                 </ModalFooter>
             </Modal>
-            {/* <div className="card">
-                <div className="card-header">
-                    Compra
-                </div>
-                <div className="card-body">
-                    <div>
-                        <button className="btn btn-sm btn-primary"
-                            onClick={() => {
-                                props.agregarCompraModal()
-                            }}
-                        >
-                            Agregar
-                        </button>
-                    </div>
-                    <div>
-                        <table className="table table-striped table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Id</th>
-                                    <th>Nombre</th>
-                                    <th>Descripción</th>
-                                    <th>Precio</th>
-                                    <th>Existencia</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {props.resultado ? (
-                                    props.resultado.map(item => (
-                                        <tr key={item.id}>
-                                            <td>{item.id}</td>
-                                            <td>{item.nombre}</td>
-                                            <td>{item.descripcion}</td>
-                                            <td>{item.precio}</td>
-                                            <td>{item.existencia}</td>
-                                            <td>
-                                                <button className="btn btn-sm btn-success"
-                                                    onClick={() => {
-                                                        props.seleccionarCompra({
-                                                            id: item.id,
-                                                            nombre: item.nombre,
-                                                            descripcion: item.descripcion, 
-                                                            precio: item.precio,
-                                                            existencia: item.existencia,
-                                                        });
-                                                        props.editarCompraModal()
-                                                    }}
-                                                >
-                                                    Editar
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    )
-                                    )
-                                ) : (
-                                    <tr>
-                                        <td colSpan={3}>No hay compras</td>
-                                    </tr>
-                                )
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div> */}
         </>
     );
 }

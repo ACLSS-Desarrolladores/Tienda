@@ -9,12 +9,13 @@ const VentaListar = (props) => {
                 <div className='d-flex gap-4' style={{ 'display': 'flex', 'flexWrap': 'wrap' }}>
                     <table className="table table-striped table-sm">
                         <thead>
-                            <tr>
-                                <th>Id Venta</th>
+                            <tr className='bg-secondary text-white'>
+                                <th>Id</th>
                                 <th>Fecha</th>
                                 <th>Cliente</th>
                                 <th>Valor</th>
                                 <th>Confirmado</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -27,14 +28,12 @@ const VentaListar = (props) => {
                                         <td>$ {item.valor}</td>
                                         <td>{item.confirmado ? 'Entragada' : 'En proceso'}</td>
                                         <td>
-                                            <button className="btn btn-sm btn-outline-success"
+                                            <button className="btn btn-sm btn-success"
                                                 onClick={() => {
                                                     props.seleccionarVenta(item);
                                                     props.editarVentaModal()
                                                 }}
-                                            >
-                                                Detalle
-                                            </button>
+                                            >Detalle</button>
                                         </td>
                                     </tr>
                                 )

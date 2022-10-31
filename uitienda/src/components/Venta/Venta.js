@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { VentaData } from '../../data/VentaData';
 import VentaListar from './VentaListar';
-import VentaAgregar from './VentaAgregar';
 import VentaEditar from './VentaEditar';
 
 const Venta = () => {
     const [resultado, setResultado] = useState([]);
-
+    const [estadoListar, setEstadoListar] = useState(true);
     const [totalVenta, setTotalVenta] = useState(0);
 
     const listarVenta = () => {
         setResultado(VentaData);
+        setEstadoListar(!estadoListar);
+    }
+
+    const calcularVenta = () => {
         const sumar = resultado.map((item) => parseFloat(item.valor))
             .reduce((previous, current) => {
                 return previous + current;
@@ -18,10 +21,8 @@ const Venta = () => {
         setTotalVenta(sumar);
     }
 
-    const [agregarModal, setAgregarModal] = useState(false);
-
-    const agregarVentaModal = () => {
-        setAgregarModal(!agregarModal);
+    if (estadoListar) {
+        listarVenta();
     }
 
     const [editarModal, setEditarModal] = useState(false);
@@ -38,14 +39,13 @@ const Venta = () => {
     }
 
     useEffect(() => {
-        listarVenta();
-    }, [resultado]);
+        calcularVenta();
+    });
 
     return (
         <>
             <VentaListar
                 resultado={resultado}
-                agregarVentaModal={agregarVentaModal}
                 seleccionarVenta={seleccionarVenta}
                 editarVentaModal={editarVentaModal}
                 totalVenta={totalVenta}
@@ -55,14 +55,6 @@ const Venta = () => {
                     editarModal={editarModal}
                     editarVentaModal={editarVentaModal}
                     actualVenta={actualVenta}
-                />
-            ) : (
-                <></>
-            )}
-            {editarModal ? (
-                <VentaAgregar
-                    agregarModal={agregarModal}
-                    agregarVentaModal={agregarVentaModal}
                 />
             ) : (
                 <></>

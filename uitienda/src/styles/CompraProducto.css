@@ -1,0 +1,10 @@
+.wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+    padding: 20px;
+}
+
+.iconHover span:hover {
+    color: #495057 !important
+}

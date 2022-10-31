@@ -2,7 +2,26 @@ import React, { useState } from 'react'
 import { FormGroup, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap'
 
 const VentaEditar = (props) => {
-    const [venta, setVenta] = useState(props.actualVenta)
+    const [venta, setVenta] = useState(props.actualVenta);
+    const [total, setTotal] = useState(0);
+    const [cantidad, setCantidad] = useState(0)
+    const [estadoDetalle, setEstadoDetalle] = useState(true);
+
+    const calcularCompra = () => {
+        setTotal(venta.detalle.map((item) => parseFloat(item.precio) * parseInt(item.cantidad))
+            .reduce((previous, current) => {
+                return previous + current;
+            }, 0));
+        setCantidad(venta.detalle.map((item) => parseInt(item.cantidad))
+            .reduce((previous, current) => {
+                return previous + current;
+            }, 0));
+        setEstadoDetalle(!estadoDetalle);
+    }
+
+    if (estadoDetalle) {
+        calcularCompra()
+    }
 
     return (
         <Modal isOpen={props.editarModal} className="modal-dialog modal-lg">
@@ -83,7 +102,6 @@ const VentaEditar = (props) => {
                                 </thead>
                                 <tbody>
                                     {venta.detalle ? (
-
                                         venta.detalle.map((item) => (
                                             <tr>
                                                 <td>{item.nombre}</td>
@@ -97,6 +115,16 @@ const VentaEditar = (props) => {
                                             <td colSpan={4}>Sin productos</td>
                                         </tr>
                                     )}
+                                    {venta.detalle ? (
+                                        <tr>
+                                            <td></td>
+                                            <td><b>Total</b></td>
+                                            <td><b>{cantidad}</b></td>
+                                            <td><b>$ {total}</b></td>
+                                        </tr>
+                                    ) : (
+                                        ''
+                                    )}
                                 </tbody>
 
                             </table>
@@ -106,17 +134,12 @@ const VentaEditar = (props) => {
             </ModalBody>
 
             <ModalFooter>
+
                 <button className="btn btn-sm px-5 btn-success"
-                    onClick={(event) => {
-                        event.preventDefault();
-                        alert("En Construcción");
-                    }}
-                >Guardar</button>
-                <button className="btn btn-sm px-5 btn-secondary"
                     onClick={() => {
                         props.editarVentaModal()
                     }}
-                >Cancelar</button>
+                >Cerrar</button>
             </ModalFooter>
         </Modal>
     )

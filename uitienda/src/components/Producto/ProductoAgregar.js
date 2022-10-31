@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { FormGroup, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap'
 
 const ProductoAgregar = (props) => {
-    const inicializarProducto = { id: '', nombre: '', descripcion: '', precio: '', existencia: '' }
+    const inicializarProducto = { id: '', nombre: '', descripcion: '', precio: '', existencia: '', url: '' }
     const [producto, setProducto] = useState(inicializarProducto)
 
     const handleInputChange = (event) => {
@@ -64,9 +64,20 @@ const ProductoAgregar = (props) => {
                     <input
                         className="form-control"
                         name="existencia"
-                        type="text"
+                        type="number"
                         autoComplete="off"
                         value={producto.existencia}
+                        onChange={handleInputChange}
+                    />
+                </FormGroup>
+                <FormGroup>
+                    <label>Url</label>
+                    <input
+                        className="form-control"
+                        name="url"
+                        type="text"
+                        autoComplete="off"
+                        value={producto.url}
                         onChange={handleInputChange}
                     />
                 </FormGroup>
@@ -75,7 +86,9 @@ const ProductoAgregar = (props) => {
                 <button className="btn btn-sm px-5 btn-success"
                     onClick={(event) => {
                         event.preventDefault();
-                        alert("En Construcción");
+                        if (!producto.id || !producto.nombre || !producto.descripcion ||
+                            !producto.precio || !producto.existencia) return;
+                        props.agregarProducto(producto);
                     }}
                 >Guardar</button>
                 <button className="btn btn-sm px-5 btn-secondary"
