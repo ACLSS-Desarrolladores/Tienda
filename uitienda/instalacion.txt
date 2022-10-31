@@ -1,0 +1,12 @@
+npx create-react-app uitienda
+
+cd .\uitienda\ 
+
+npm i react-router-dom
+npm i bootstrap reactstrap
+npm i bootstrap-icons 
+
+npm start
+
+
+
