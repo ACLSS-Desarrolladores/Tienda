@@ -1,0 +1,9 @@
+cd .\apptienda\ 
+
+npm init -y
+
+npm i express
+npm i body-parser
+npm i cors
+
+node app.js
